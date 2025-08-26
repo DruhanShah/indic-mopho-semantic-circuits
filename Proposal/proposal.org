@@ -1,0 +1,55 @@
+#+title: Semantic Role Circuits in Language Models
+ #+subtitle: Team: Automated Null Space Projection (ANLP)
+
+ #+latex_header: \author{Druhan Rajiv Shah \\ IIIT Hyderabad \And Sidharth K \\ IIIT Hyderabad \And Anshul Krishnadas Bhagwat \\ IIIT Hyderabad}
+#+options: toc:nil num:t
+
+#+latex_header: \usepackage[margin=2cm]{geometry}
+#+latex_header: \usepackage{acl}
+
+#+bibliography: custom.bib
+#+cite_export: natbib apa
+
+
+#+begin_abstract
+The field of Mechanistic Interpretability (MI) aims to determine how information from the input is used by the internals of transformer-based language models. Several breakthroughs have been made in this field, but most of these are either on purely English-based models, or on multilingual models and their common linguistic abilities. This project aims to explore semantic role circuits and their functioning in monolingual models and contrast their structure across models traind on morphologically varied languages.
+#+end_abstract
+
+* Introduction
+
+The advent of large-scale generative language models has revolutionized natural language processing (NLP), yet their internal workings remain largely opaque. This "black box" problem is a significant barrier to building truly trustworthy and reliable AI systems. The field of Mechanistic Interpretability (MI) seeks to address this by reverse-engineering the specific, human-understandable algorithms that models learn during training [cite:@elhage2021mathematical].
+
+However, a lot of MI research has been concentrated on English-language models, creating a critical gap in our understanding of how a Transformer-based model, adapts to the typological diversity of human languages. Different languages encode grammatical relationships in fundamentally different ways. For instance, English (Germanic) relies heavily on a fixed Subject-Verb-Object (SVO) word order . In contrast, Hindi (Indo-Aryan) uses a more flexible but primarily Subject-Object-Verb (SOV) order [cite:@verma1970word], marking grammatical roles with distinct postpositional particles. Telugu (Dravidian) is also SOV but employs a highly agglutinative, morphological case system, where roles are marked by suffixes attached directly to nouns.
+
+This research proposes a controlled, cross-linguistic experiment to investigate how these typological differences shape the internal circuits of language models. We will train three identical, autoregressive models (~124.5M parameters) from scratch, one each on English, Hindi, and Telugu. We will then use visualisations, probes and causal interventions to identify and compare the neural circuits each model develops to process semantic roles.
+
+By comparing the circuits that emerge in response to these distinct grammatical strategies, we can move beyond simply knowing that models work for different languages to understanding precisely how they adapt their computational mechanisms. This study will attempt to provide a mechanistic, comparative analysis of semantic role processing in generative models across different language families, offering foundational insights into the functioning of Transformer-based AI systems.
+
+
+* Background and Prior Work
+
+\paragraph{Semantic Role Labeling (SRL)}
+SRL is a central process in NLP that seeks to uncover the roles that words (or their computational counterparts: tokens) perform as arguments to the sentence's core verb or predicate. The PropBank [cite:@10.1162/0891201053630264] schema provides a set of roles that each argument is classified into, including =ARG0= (the entity performing the action out of their own volition), =ARG1= (the entity on whom the action is performed), and =ARGM-LOC= (the verb modifier that indicates location) among others. While classifier models trained to classify tokens by semantic role are numerous, we aim to study generative models and their use of semantic roles instead.
+
+The representation of semantic roles in each language is unique, with English relying on word order, Hindi using distinct post-positional case markers, and Telugu (which is agglutinative) using case-specific suffixes to indicate, but not necessarily determine semantic roles [cite:@vaidya-etal-2011-analysis].
+
+\paragraph{Mechanistic Interpretability (MI)}
+MI is a field of study that attempts to reverse-engineer the internal workings of neural models, particularly by obtaining insights about the pathways that information takes in the process of generating outputs. These pathways are isolated in the form of transformer /circuits/: a narrow, functional subgraph of model activations and parameters that perform a single specific task [cite:@elhage2021mathematical]. In our case, we seek a circuit that uses the semantic roles of the previous tokens in order to narrow down the sample space for the next generated token.
+
+Identifying these circuits runs the risk of drawing spurious conclusions from observed correlations, however. In order to determine the causality of these observed circuits, activations are /intervened/ upon and ablated to observe their effect on the output. This practice has been instrumental in identifying key mechanisms like Induction Heads, and has yielded useful linguistic insights such as the circuits used in Indirect Object Identification.
+
+
+* Methodology and Timeline
+
+This project aims to cover two phases: the training and evaluation phase, and the interpretability phase. The first, while theoretically simple, will require some time since we seek to train three GPT-like [cite:@Radford2019LanguageMA] models from scratch on the task of Next Token Prediction. We expect to be done with this by the Mid-submission.
+
+In the second phase, we intend to probe the models' layers and attention heads for semantic role information, test their validity through causal interventions, and finally reconstruct circuits that use prior semantic roles to generate tokens. Intermediate results can include verification of Induction Heads and head ablations.
+
+Comparison of circuits between languages will be qualitatively done, since linguistic nuance is to be expected when dealing with such morphologically distinct languages as the chosen three.
+
+** Datasets
+
+The datasets we will use for training models on each language are their respective Wikipedia datasets [cite:@wikidump]. These are sufficiently large and varied to train autoregressive generation on. For SRL datasets, we use the respective PropBanks [cite:@10.1162/0891201053630264;@Bhat2017;@jindal-EtAl:2022:LREC;@akbik-etal-2015-generating].
+
+
+#+print_bibliography: t

@@ -1,0 +1,73 @@
+\begin{thebibliography}{9}
+\providecommand{\natexlab}[1]{#1}
+
+\bibitem[{Akbik et~al.(2015)Akbik, Chiticariu, Danilevsky, Li, Vaithyanathan,
+  and Zhu}]{akbik-etal-2015-generating}
+Alan Akbik, Laura Chiticariu, Marina Danilevsky, Yunyao Li, Shivakumar
+  Vaithyanathan, and Huaiyu Zhu. 2015.
+\newblock \href {https://doi.org/10.3115/v1/P15-1039} {Generating high quality
+  proposition {B}anks for multilingual semantic role labeling}.
+\newblock In \emph{Proceedings of the 53rd Annual Meeting of the Association
+  for Computational Linguistics and the 7th International Joint Conference on
+  Natural Language Processing (Volume 1: Long Papers)}, pages 397--407,
+  Beijing, China. Association for Computational Linguistics.
+
+\bibitem[{Bhat et~al.(2017)Bhat, Bhatt, Farudi, Klassen, Narasimhan, Palmer,
+  Rambow, Sharma, Vaidya, Ramagurumurthy~Vishnu, and Xia}]{Bhat2017}
+Riyaz~Ahmad Bhat, Rajesh Bhatt, Annahita Farudi, Prescott Klassen, Bhuvana
+  Narasimhan, Martha Palmer, Owen Rambow, Dipti~Misra Sharma, Ashwini Vaidya,
+  Sri Ramagurumurthy~Vishnu, and Fei Xia. 2017.
+\newblock \href {https://doi.org/10.1007/978-94-024-0881-2_24} {\emph{The
+  Hindi/Urdu Treebank Project}}, pages 659--697.
+\newblock Springer Netherlands, Dordrecht.
+
+\bibitem[{Elhage et~al.(2021)Elhage, Nanda, Olsson, Henighan, Joseph, Mann,
+  Askell, Bai, Chen, Conerly et~al.}]{elhage2021mathematical}
+Nelson Elhage, Neel Nanda, Catherine Olsson, Tom Henighan, Nicholas Joseph, Ben
+  Mann, Amanda Askell, Yuntao Bai, Anna Chen, Tom Conerly, and 1 others. 2021.
+\newblock A mathematical framework for transformer circuits.
+\newblock \emph{Transformer Circuits Thread}, 1(1):12.
+
+\bibitem[{Foundation(2023)}]{wikidump}
+Wikimedia Foundation. 2023.
+\newblock \href {https://dumps.wikimedia.org} {Wikimedia downloads}.
+
+\bibitem[{Jindal et~al.(2022)Jindal, Rademaker, Ulewicz, Linh, Nguyen, Tran,
+  Zhu, and Li}]{jindal-EtAl:2022:LREC}
+Ishan Jindal, Alexandre Rademaker, Micha{\l} Ulewicz, Ha~Linh, Huyen Nguyen,
+  Khoi-Nguyen Tran, Huaiyu Zhu, and Yunyao Li. 2022.
+\newblock \href {https://aclanthology.org/2022.lrec-1.181} {Universal
+  proposition bank 2.0}.
+\newblock In \emph{Proceedings of the Language Resources and Evaluation
+  Conference}, pages 1700--1711, Marseille, France. European Language Resources
+  Association.
+
+\bibitem[{Palmer et~al.(2005)Palmer, Gildea, and
+  Kingsbury}]{10.1162/0891201053630264}
+Martha Palmer, Daniel Gildea, and Paul Kingsbury. 2005.
+\newblock \href {https://doi.org/10.1162/0891201053630264} {The proposition
+  bank: An annotated corpus of semantic roles}.
+\newblock \emph{Computational Linguistics}, 31(1):71--106.
+
+\bibitem[{Radford et~al.(2019)Radford, Wu, Child, Luan, Amodei, and
+  Sutskever}]{Radford2019LanguageMA}
+Alec Radford, Jeff Wu, Rewon Child, David Luan, Dario Amodei, and Ilya
+  Sutskever. 2019.
+\newblock \href {https://api.semanticscholar.org/CorpusID:160025533} {Language
+  models are unsupervised multitask learners}.
+
+\bibitem[{Vaidya et~al.(2011)Vaidya, Choi, Palmer, and
+  Narasimhan}]{vaidya-etal-2011-analysis}
+Ashwini Vaidya, Jinho Choi, Martha Palmer, and Bhuvana Narasimhan. 2011.
+\newblock \href {https://aclanthology.org/W11-0403/} {Analysis of the {H}indi
+  {P}roposition {B}ank using dependency structure}.
+\newblock In \emph{Proceedings of the 5th Linguistic Annotation Workshop},
+  pages 21--29, Portland, Oregon, USA. Association for Computational
+  Linguistics.
+
+\bibitem[{Verma(1970)}]{verma1970word}
+Shivendra~Kishore Verma. 1970.
+\newblock Word order in hindi.
+\newblock \emph{Archiv orientalni}, 38:28--32.
+
+\end{thebibliography}
