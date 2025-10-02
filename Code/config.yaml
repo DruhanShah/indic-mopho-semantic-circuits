@@ -1,0 +1,46 @@
+language: en # choices: en, hi, te
+
+paths:
+  data_dir: ./data
+  model_dir: ./models
+
+tokenizer:
+  vocab_size: 50257
+  min_frequency: 2
+
+model:
+  n_positions: 1024
+  n_embd: 768
+  n_layer: 12
+  n_head: 12
+
+processing:
+  num_workers: 4
+
+# Corresponds to Hugging Face's transformers.TrainingArguments
+training:
+  num_train_epochs: 3
+  per_device_train_batch_size: 8
+  learning_rate: 5e-5
+
+  weight_decay: 0.01
+  adam_beta1: 0.9
+  adam_beta2: 0.999
+  adam_epsilon: 1e-8
+  lr_scheduler_type: "cosine" # "linear", "cosine", "constant", etc.
+  warmup_steps: 500
+
+  logging_strategy: "steps"
+  logging_steps: 500
+  save_strategy: "steps"
+  save_steps: 10000
+  save_total_limit: 2
+
+  fp16: true
+  
+  prediction_loss_only: true
+  report_to: "none" # "tensorboard", "wandb", etc.
+
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
