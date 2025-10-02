@@ -69,5 +69,6 @@ Our immediate priority is to complete the training of the language-specific mode
 4. Construction and comparison of circuits for such features across the languages.
 
 We are on track to complete these steps and present a comprehensive comparative analysis in our final report.
+The relevant repository for this project is [[https://github.com/DruhanShah/indic-morpho-semantic-circuits][on GitHub]].
 
 #+print_bibliography: t

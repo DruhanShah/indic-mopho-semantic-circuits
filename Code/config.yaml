@@ -1,13 +1,17 @@
-language: en # choices: en, hi, te
+language: en # en, hi, te
 
 paths:
-  data_dir: ./data
-  model_dir: ./models
+  model_dir: Code/assets/models
+
+data:
+  name: wikipedia
+  date: "20220301"
 
 tokenizer:
   vocab_size: 50257
   min_frequency: 2
 
+# GPT-2 Small
 model:
   n_positions: 1024
   n_embd: 768
@@ -17,7 +21,7 @@ model:
 processing:
   num_workers: 4
 
-# Corresponds to Hugging Face's transformers.TrainingArguments
+# Corresponds to Hugging Face"s transformers.TrainingArguments
 training:
   num_train_epochs: 3
   per_device_train_batch_size: 8
@@ -43,4 +47,4 @@ training:
 
 hydra:
   run:
-    dir: outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    dir: Code/assets/outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
