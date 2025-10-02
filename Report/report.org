@@ -1,0 +1,8 @@
+#+title: Project Mid Submission
+ #+subtitle: Team: Automated Null Space Projection (ANLP)
+ #+latex_header: \author{Druhan Rajiv Shah \\ IIIT Hyderabad \And Sidharth K \\ IIIT Hyderabad \And Anshul Krishnadas Bhagwat \\ IIIT Hyderabad}
+
+#+options: toc:nil num:nil 
+
+#+latex_header: \usepackage{acl}
+#+cite_export: natbib apa

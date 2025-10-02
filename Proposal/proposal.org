@@ -12,16 +12,16 @@
 
 
 #+begin_abstract
-The field of Mechanistic Interpretability (MI) aims to determine how information from the input is used by the internals of transformer-based language models. Several breakthroughs have been made in this field, but most of these are either on purely English-based models, or on multilingual models and their common linguistic abilities. This project aims to explore semantic role circuits and their functioning in monolingual models and contrast their structure across models traind on morphologically varied languages.
+The field of Mechanistic Interpretability (MI) aims to determine how information from the input is used by the internals of transformer-based language models. Several breakthroughs have been made in this field, but most of these are either on purely English-based models, or on multilingual models and their common linguistic abilities. This project aims to explore semantic role circuits and their functioning in monolingual models and contrast their structure across models trained on morphologically varied languages.
 #+end_abstract
 
 * Introduction
 
 The advent of large-scale generative language models has revolutionized natural language processing (NLP), yet their internal workings remain largely opaque. This "black box" problem is a significant barrier to building truly trustworthy and reliable AI systems. The field of Mechanistic Interpretability (MI) seeks to address this by reverse-engineering the specific, human-understandable algorithms that models learn during training [cite:@elhage2021mathematical].
 
-However, a lot of MI research has been concentrated on English-language models, creating a critical gap in our understanding of how a Transformer-based model, adapts to the typological diversity of human languages. Different languages encode grammatical relationships in fundamentally different ways. For instance, English (Germanic) relies heavily on a fixed Subject-Verb-Object (SVO) word order . In contrast, Hindi (Indo-Aryan) uses a more flexible but primarily Subject-Object-Verb (SOV) order [cite:@verma1970word], marking grammatical roles with distinct postpositional particles. Telugu (Dravidian) is also SOV but employs a highly agglutinative, morphological case system, where roles are marked by suffixes attached directly to nouns.
+However, a lot of MI research has been concentrated on English-language models, creating a critical gap in our understanding of how a Transformer-based model adapts to the typological diversity of human languages. Different languages encode grammatical relationships in fundamentally different ways. For instance, English (Germanic) relies heavily on a fixed Subject-Verb-Object (SVO) word order . In contrast, Hindi (Indo-Aryan) uses a more flexible but primarily Subject-Object-Verb (SOV) order [cite:@verma1970word], marking grammatical roles with distinct postpositional particles. Telugu (Dravidian) is also SOV but employs a highly agglutinative, morphological case system, where roles are marked by suffixes attached directly to nouns.
 
-This research proposes a controlled, cross-linguistic experiment to investigate how these typological differences shape the internal circuits of language models. We will train three identical, autoregressive models (~124.5M parameters) from scratch, one each on English, Hindi, and Telugu. We will then use visualisations, probes and causal interventions to identify and compare the neural circuits each model develops to process semantic roles.
+This research proposes a controlled, cross-linguistic experiment to investigate how these typological differences shape the internal circuits of language models. We will train three identical, autoregressive models (~124.5M parameters) from scratch, one each on English, Hindi, and Telugu. We will then use visualisations, probes, and causal interventions to identify and compare the neural circuits each model develops to process semantic roles.
 
 By comparing the circuits that emerge in response to these distinct grammatical strategies, we can move beyond simply knowing that models work for different languages to understanding precisely how they adapt their computational mechanisms. This study will attempt to provide a mechanistic, comparative analysis of semantic role processing in generative models across different language families, offering foundational insights into the functioning of Transformer-based AI systems.
 
@@ -45,11 +45,11 @@ This project aims to cover two phases: the training and evaluation phase, and th
 
 In the second phase, we intend to probe the models' layers and attention heads for semantic role information, test their validity through causal interventions, and finally reconstruct circuits that use prior semantic roles to generate tokens. Intermediate results can include verification of Induction Heads and head ablations.
 
-Comparison of circuits between languages will be qualitatively done, since linguistic nuance is to be expected when dealing with such morphologically distinct languages as the chosen three.
+Comparison of circuits between languages will be qualitative, since linguistic nuance is to be expected when dealing with such morphologically distinct languages as the chosen three.
 
 ** Datasets
 
-The datasets we will use for training models on each language are their respective Wikipedia datasets [cite:@wikidump]. These are sufficiently large and varied to train autoregressive generation on. For SRL datasets, we use the respective PropBanks [cite:@10.1162/0891201053630264;@Bhat2017;@jindal-EtAl:2022:LREC;@akbik-etal-2015-generating].
+The datasets we will use for training models on each language are their respective Wikipedia datasets [cite:@wikidump]. These are sufficiently large and varied to use for training for autoregressive generation. For SRL datasets, we use the respective PropBanks [cite:@10.1162/0891201053630264;@Bhat2017;@jindal-EtAl:2022:LREC;@akbik-etal-2015-generating].
 
 
 #+print_bibliography: t
