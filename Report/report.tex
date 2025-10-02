@@ -1,4 +1,4 @@
-% Created 2025-10-02 Thu 19:54
+% Created 2025-10-02 Thu 21:37
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -37,10 +37,10 @@
 
 \maketitle
 \begin{abstract}
-This report details the progress on our investigation into cross-linguistic semantic role circuits. As outlined in our proposal, the first phase of this project involved training three monolingual, autoregressive transformer models for English, Hindi, and Telugu. We have partially completed this phase and have begun conducting some initial exploratory experiments. We have also conducted elementary tests on a pretrained \texttt{gpt2-small} model for English, and are in the process of training the Hindi and Telugu models. Preliminary analyses confirm the presence of mechanisms to account for morphosyntactic features that each language requires.
+This report details the progress on our investigation into cross-linguistic semantic role circuits. As outlined in our proposal, the first phase of this project involved training three monolingual, autoregressive transformer models for English, Hindi, and Telugu. We have started this phase and have begun conducting some initial exploratory experiments. We have also conducted elementary tests on a pretrained \texttt{gpt2-small} model for English, and are in the process of training the Hindi and Telugu models. Preliminary analyses have been conducted to check for the presence of mechanisms to account for morphosyntactic features that each language requires.
 \end{abstract}
 \section*{Introduction}
-\label{sec:orgbe3a674}
+\label{sec:org1cc1996}
 
 The advent of large-scale generative language models has revolutionized natural language processing (NLP), yet their internal workings remain largely opaque. This "black box" problem is a significant barrier to building truly trustworthy and reliable AI systems. The field of Mechanistic Interpretability (MI) seeks to address this by reverse-engineering the specific, human-understandable algorithms that models learn during training \citep{elhage2021mathematical}.
 
@@ -50,43 +50,42 @@ This research proposes a controlled, cross-linguistic experiment to investigate 
 
 By comparing the circuits that emerge in response to these distinct grammatical strategies, we can move beyond simply knowing that models work for different languages to understanding precisely how they adapt their computational mechanisms. This study will attempt to provide a mechanistic, comparative analysis of semantic role processing in generative models across different language families, offering foundational insights into the functioning of Transformer-based AI systems.
 \section*{Background and Related Work}
-\label{sec:org4aa9f51}
+\label{sec:orgf24a0fb}
 
 SRL is a central process in NLP that seeks to uncover the roles that words (or their computational counterparts: tokens) perform as arguments to the sentence's core verb or predicate. The PropBank \citep{10.1162/0891201053630264} schema provides a set of roles that each argument is classified into, including \texttt{ARG0} (the entity performing the action out of their own volition), \texttt{ARG1} (the entity on whom the action is performed), and \texttt{ARGM-LOC} (the verb modifier that indicates location) among others. While classifier models trained to classify tokens by semantic role are numerous, we aim to study generative models and their use of semantic roles instead.
 
 The representation of semantic roles in each language is unique, with English relying on word order, Hindi using distinct post-positional case markers, and Telugu (which is agglutinative) using case-specific suffixes to indicate, but not necessarily determine semantic roles \citep{vaidya-etal-2011-analysis}.
-
 The work by \citet{ghosh.etal2024} relies on the well-established idea that languages which have no Dominant word order (like Hindi and to an extent Telugu) establish information about semantic roles in sentences with morphosyntactic features like \emph{kāraka} markers or \emph{vibhaktī} affixes \citep{vaidya-etal-2011-analysis}. Thus, models can be expected to use differing methods to encode and use information like semantic roles in order to generate tokens.
 
 The field of Mechanistic Interpretability (MI) seeks to reverse-engineer the internal algorithms learned by transformer-based language models during training. This approach moves beyond performance metrics to explain the specific computational mechanisms underlying a model's behavior. The fundamental unit of analysis in MI is the transformer circuit: \citep{elhage2021mathematical} a subgraph of model parameters and activations responsible for a discrete task. Research in this area has successfully identified key circuits, such as Induction Heads \citep{olsson.etal2022}, and circuits for indirect object identification \citep{wang.etal2022}, which are critical for in-context learning and recall. However, a significant portion of MI research has concentrated on English-language models. This focus creates a critical gap in understanding how a transformer's architecture adapts to the vast typological diversity of human languages. Grammatical relationships are encoded in fundamentally different ways across language families, and the circuits developed to process them are likely to differ accordingly.
 \section*{Experimental progress}
-\label{sec:org904fcc7}
+\label{sec:orgebc83d4}
 
 \subsection*{Model Training}
-\label{sec:orgcfa1fe7}
+\label{sec:org5aaf225}
 
 As per our proposal, we chose to train three identical, autoregressive models (\textasciitilde{}124.5M parameters) from scratch, one each on English, Hindi, and Telugu. The Hindi and Telugu models are currently in the process of being trained with the English model to immediately follow. The models will use the GPT2 architecture \citep{Radford2019LanguageMA}.
 \subsubsection*{Datasets}
-\label{sec:org6736841}
+\label{sec:org2c39c19}
 
 We use the Wikipedia dump \citep{wikidump} as our training corpus. The raw data was pre-processed and tokenized using a Byte-Pair Encoding (BPE) tokenizer trained on the corpus, with a vocabulary size of 50,257.
 The datasets for semantic-role information for future experiments is going to be the PropBanks for the respective languages \citep{10.1162/0891201053630264,Bhat2017,jindal-EtAl:2022:LREC,akbik-etal-2015-generating}.
 \subsection*{Preliminary Analysis}
-\label{sec:orgc39795a}
+\label{sec:org6588ccb}
 
 While awaiting the completion of training for the Hindi and Telugu models, we have begun our investigation into a baseline English model, which in this case is \texttt{openaicommunity/gpt2} which we shall call \texttt{gpt2-small}. Our initial analysis focuses on identifying attention heads that are sensitive to syntactic and semantic dependencies, which are precursors to full semantic role circuits.
 
 A exploratory test showed that \texttt{gpt2-small} in English depends very heavily on Positional Encodings, and similar positional information. This is as expected since English encodes semantic role information through word order. Indeed a similarly exploratory test may be done to analyse the same model trained without the use of positional embeddings at all in order to analyse the work of \citet{haviv.etal2022} where such models perform near-identically.
 
-Standard visualization techniques were employed to analyze attention patterns on sample sentences. We observed the emergence of several specialized heads, including:
+Standard visualization techniques \footnote{See \texttt{Code/shenanigans/analysis.ipynb} in the repository.} were employed to analyze attention patterns on sample sentences. We observed the emergence of several specialized heads, including:
 
 \begin{itemize}
 \item \emph{Previous Token Heads}: These heads attend strongly to the immediately preceding token, a fundamental mechanism in autoregressive models.
-\item \emph{Induction Heads}: As documented in prior work, we identified heads that appear to implement a form of in-context learning, completing patterns like \texttt{A B ... A -> B}. These are critical for copying and recall mechanisms.
+\item \emph{Induction Heads}: As documented in prior work, we identified heads that appear to implement a very barebones form of in-context learning, completing patterns like \texttt{AB...A -> B}. These are critical for copying and recall mechanisms.
 \item \emph{Semantic Role Depepndency Heads:} Notably, we see that \texttt{gpt2-small} in English does have heads that attend to semantic role-based dependencies (\emph{e.g.} Pred \(\rightarrow\) ARG0) but these heads are either not causal, or they do not hold up to sentences which have those same semantic roles placed further apart.
 \end{itemize}
 \subsubsection*{Next Steps}
-\label{sec:org65fbd89}
+\label{sec:org6fcac66}
 
 Our immediate priority is to complete the training of the language-specific models. Once training is complete, we will proceed with the second phase of our project as outlined in the proposal:
 
@@ -98,6 +97,7 @@ Our immediate priority is to complete the training of the language-specific mode
 \end{enumerate}
 
 We are on track to complete these steps and present a comprehensive comparative analysis in our final report.
+The relevant repository for this project is \href{https://github.com/DruhanShah/indic-morpho-semantic-circuits}{on GitHub (this link)}.
 
 \bibliographystyle{apa}
 \bibliography{./custom,~/Research/Bibliography/NLP-Stuff,~/Research/Bibliography/Math-Stuff,~/Research/Bibliography/Other-Fun-Stuff}

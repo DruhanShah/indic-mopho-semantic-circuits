@@ -11,7 +11,7 @@
 
 
 #+begin_abstract
-This report details the progress on our investigation into cross-linguistic semantic role circuits. As outlined in our proposal, the first phase of this project involved training three monolingual, autoregressive transformer models for English, Hindi, and Telugu. We have partially completed this phase and have begun conducting some initial exploratory experiments. We have also conducted elementary tests on a pretrained =gpt2-small= model for English, and are in the process of training the Hindi and Telugu models. Preliminary analyses confirm the presence of mechanisms to account for morphosyntactic features that each language requires.
+This report details the progress on our investigation into cross-linguistic semantic role circuits. As outlined in our proposal, the first phase of this project involved training three monolingual, autoregressive transformer models for English, Hindi, and Telugu. We have started this phase and have begun conducting some initial exploratory experiments. We have also conducted elementary tests on a pretrained =gpt2-small= model for English, and are in the process of training the Hindi and Telugu models. Preliminary analyses have been conducted to check for the presence of mechanisms to account for morphosyntactic features that each language requires.
 #+end_abstract
 
 
@@ -53,10 +53,10 @@ While awaiting the completion of training for the Hindi and Telugu models, we ha
 
 A exploratory test showed that =gpt2-small= in English depends very heavily on Positional Encodings, and similar positional information. This is as expected since English encodes semantic role information through word order. Indeed a similarly exploratory test may be done to analyse the same model trained without the use of positional embeddings at all in order to analyse the work of [cite/t:@haviv.etal2022] where such models perform near-identically.
 
-Standard visualization techniques were employed to analyze attention patterns on sample sentences. We observed the emergence of several specialized heads, including:
+Standard visualization techniques [fn::See =Code/shenanigans/analysis.ipynb= in the repository.] were employed to analyze attention patterns on sample sentences. We observed the emergence of several specialized heads, including:
 
 - /Previous Token Heads/: These heads attend strongly to the immediately preceding token, a fundamental mechanism in autoregressive models.
-- /Induction Heads/: As documented in prior work, we identified heads that appear to implement a form of in-context learning, completing patterns like =A B ... A -> B=. These are critical for copying and recall mechanisms.
+- /Induction Heads/: As documented in prior work, we identified heads that appear to implement a very barebones form of in-context learning, completing patterns like =AB...A -> B=. These are critical for copying and recall mechanisms.
 - /Semantic Role Depepndency Heads:/ Notably, we see that =gpt2-small= in English does have heads that attend to semantic role-based dependencies (/e.g./ Pred \rightarrow ARG0) but these heads are either not causal, or they do not hold up to sentences which have those same semantic roles placed further apart.
 
 *** Next Steps
@@ -69,6 +69,6 @@ Our immediate priority is to complete the training of the language-specific mode
 4. Construction and comparison of circuits for such features across the languages.
 
 We are on track to complete these steps and present a comprehensive comparative analysis in our final report.
-The relevant repository for this project is [[https://github.com/DruhanShah/indic-morpho-semantic-circuits][on GitHub]].
+The relevant repository for this project is [[https://github.com/DruhanShah/indic-morpho-semantic-circuits][on GitHub (this link)]].
 
 #+print_bibliography: t
