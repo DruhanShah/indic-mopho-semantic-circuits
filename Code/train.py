@@ -1,113 +1,112 @@
-from pathlib import Path
-import hydra
-from omegaconf import DictConfig, OmegaConf
-
-from tokenizers import ByteLevelBPETokenizer
+import torch
+from datasets import load_dataset
 from transformers import (
-    GPT2Config,
-    GPT2LMHeadModel,
+    AutoConfig,
+    AutoModelForCausalLM,
     GPT2TokenizerFast,
-    DataCollatorForLanguageModeling,
     Trainer,
     TrainingArguments,
+    DataCollatorForLanguageModeling,
 )
-from datasets import load_dataset
+from tokenizers import ByteLevelBPETokenizer
+from pathlib import Path
 
+MODEL_NAME = "gpt2"
+LANGUAGES = ["en", "hi", "te"]
+BLOCK_SIZE = 128
+VOCAB_SIZE = 30_000
 
-def train_tokenizer(lang: str, output_dir: str, cfg: DictConfig):
-    tokenizer_path = Path(output_dir) / f"{lang}-tokenizer"
-    if not tokenizer_path.exists():
+def tokenize_function(examples):
+    return tokenizer(examples["text"])
+
+def group_texts(examples):
+    concatenated_examples = {k: sum(examples[k], []) for k in examples.keys()}
+    total_length = len(concatenated_examples[list(examples.keys())[0]])
+    if total_length >= BLOCK_SIZE:
+        total_length = (total_length // BLOCK_SIZE) * BLOCK_SIZE
+    result = {
+        k: [t[i : i + BLOCK_SIZE] for i in range(0, total_length, BLOCK_SIZE)]
+        for k, t in concatenated_examples.items()
+    }
+    result["labels"] = result["input_ids"].copy()
+    return result
+
+for lang in LANGUAGES:
+    print(f"Loading Wikipedia dataset for {lang}")
+    raw_dataset = load_dataset("wikimedia/wikipedia", f"20231101.{lang}", split='train[:1%]')
+
+    def clean_text(examples):
+        return {'text': [text for text in examples['text'] if text and not text.isspace()]}
+
+    dataset = raw_dataset.map(clean_text, batched=True,
+                              num_proc=4, remove_columns=raw_dataset.column_names)
+    output_dir = Path(f"./gpt2-wikipedia-{lang}")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    tokenizer_path = output_dir / "tokenizer"
+
+    if not tokenizer_path.exists() or not any(tokenizer_path.iterdir()):
         print(f"Training tokenizer for '{lang}'...")
-        tokenizer_path.mkdir(parents=True, exist_ok=True)
+        tokenizer_path.mkdir(exist_ok=True)
 
-        tokenizer_data_path = Path(output_dir) / f"{lang}-tokenizer-data.txt"
-        dataset_name = f"{cfg.data.date}.{lang}"
+        def text_iterator():
+            for i in range(0, len(dataset), 1000):
+                yield dataset[i : i + 1000]["text"]
 
-        if not tokenizer_data_path.exists():
-            print(f"Streaming dataset '{cfg.data.name}' ({dataset_name})"
-                  f"to {tokenizer_data_path} for tokenizer training.")
-            dataset_stream = load_dataset(cfg.data.name, dataset_name,
-                                          split='train', streaming=True)
-            with open(tokenizer_data_path, "w", encoding="utf-8") as f:
-                for example in dataset_stream:
-                    text = example['text'].strip()
-                    if text:
-                        f.write(text + "\n")
-
-        tokenizer = ByteLevelBPETokenizer()
-        tokenizer.train(
-            files=[str(tokenizer_data_path)],
-            vocab_size=cfg.tokenizer.vocab_size,
-            min_frequency=cfg.tokenizer.min_frequency,
+        bpe_tokenizer = ByteLevelBPETokenizer()
+        bpe_tokenizer.train_from_iterator(
+            text_iterator(),
+            vocab_size=VOCAB_SIZE,
+            min_frequency=2,
             special_tokens=["<s>", "<pad>", "</s>", "<unk>", "<mask>"],
         )
-
-        tokenizer.save_model(str(tokenizer_path))
-        print(f"Tokenizer for '{lang}' trained and saved to {tokenizer_path}")
+        bpe_tokenizer.save_model(str(tokenizer_path))
     else:
-        print(f"Tokenizer for '{lang}' already exists at {tokenizer_path}")
+        print(f"Tokenizer exists for {lang}")
 
-    return str(tokenizer_path)
+    tokenizer = GPT2TokenizerFast.from_pretrained(str(tokenizer_path))
+    tokenizer.add_special_tokens({
+        "eos_token": "</s>",
+        "pad_token": "<pad>",
+        "bos_token": "<s>",
+        "unk_token": "<unk>",
+        "mask_token": "<mask>",
+    })
 
+    tokenized_dataset = dataset.map(tokenize_function,
+                                    batched=True, num_proc=4, remove_columns=["text"])
+    lm_dataset = tokenized_dataset.map(group_texts, batched=True, num_proc=4)
 
-@hydra.main(version_base=None, config_path="conf", config_name="config")
-def main(cfg: DictConfig):
-    # Pre-prep
-    model_dir = Path(hydra.utils.to_absolute_path(cfg.paths.model_dir))
-    model_dir.mkdir(parents=True, exist_ok=True)
+    print(f"Dataset prepared for '{lang}'. Total samples: {len(lm_dataset)}")
 
-    tokenizer_path = train_tokenizer(cfg.language, str(model_dir), cfg)
-    tokenizer = GPT2TokenizerFast.from_pretrained(tokenizer_path)
-    tokenizer.add_special_tokens({'pad_token': '<pad>'})
-    print(f"Tokenizer loaded. Vocab size: {tokenizer.vocab_size}")
-
-    model = GPT2LMHeadModel(config=GPT2Config(
-        vocab_size=tokenizer.vocab_size,
-        pad_token_id=tokenizer.pad_token_id,
-        **cfg.model
-    ))
-    model.resize_token_embeddings(len(tokenizer))
-    print(f"Model configured with {model.num_parameters():,} params")
-
-    dataset_config_name = f"{cfg.data.date}.{cfg.language}"
-    dataset = load_dataset(cfg.data.name, dataset_config_name, split='train')
-
-    def tokenize_function(examples):
-        return tokenizer(examples["text"], truncation=True,
-                         max_length=cfg.model.n_positions)
-
-    tokenized_dataset = dataset.map(
-        tokenize_function,
-        batched=True,
-        num_proc=cfg.processing.num_workers,
-        remove_columns=dataset.column_names
+    config = AutoConfig.from_pretrained(
+        MODEL_NAME,
+        vocab_size=len(tokenizer),
+        n_ctx=BLOCK_SIZE,
+        bos_token_id=tokenizer.bos_token_id,
+        eos_token_id=tokenizer.eos_token_id,
     )
-    print(f"Dataset processed. Number of examples: {len(tokenized_dataset)}")
+    model = AutoModelForCausalLM.from_config(config)
 
-    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,
-                                                    mlm=False)
-
-    # Actual training
-    output_dir = f"./gpt2-{cfg.language}-checkpoints"
-
+    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+    
     training_args = TrainingArguments(
-        output_dir=output_dir,
+        output_dir=str(output_dir),
         overwrite_output_dir=True,
-        **OmegaConf.to_container(cfg.training, resolve=True)
+        num_train_epochs=1,
+        per_device_train_batch_size=8,
+        save_steps=10_000,
+        save_total_limit=2,
+        prediction_loss_only=True,
+        logging_steps=500,
     )
     trainer = Trainer(
         model=model,
         args=training_args,
+        train_dataset=lm_dataset,
         data_collator=data_collator,
-        train_dataset=tokenized_dataset,
     )
     trainer.train()
 
-    final_model_path = model_dir / f"gpt2-{cfg.language}-final"
-    trainer.save_model(str(final_model_path))
-    tokenizer.save_pretrained(str(final_model_path))
-    print(f"Final model and tokenizer saved to {final_model_path}")
-
-
-if __name__ == "__main__":
-    main()
+    print(f"Training finished. Saving model for '{lang}' to {output_dir}")
+    trainer.save_model(str(output_dir))
+    tokenizer.save_pretrained(str(output_dir))

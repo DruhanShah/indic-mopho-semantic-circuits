@@ -1,7 +1,15 @@
-language: en # en, hi, te
+defaults:
+  - paths: local
+  - _self_
 
 paths:
-  model_dir: Code/assets/models
+  local:
+    assets_dir: assets
+  ada:
+    assets_dir: /scratch/druhan/assets
+
+
+language: en # en, hi, te
 
 data:
   name: wikipedia
@@ -13,7 +21,7 @@ tokenizer:
 
 # GPT-2 Small
 model:
-  n_positions: 1024
+  n_positions: 256
   n_embd: 768
   n_layer: 12
   n_head: 12
@@ -47,4 +55,4 @@ training:
 
 hydra:
   run:
-    dir: Code/assets/outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+    dir: ${paths.assets_dir}/outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
