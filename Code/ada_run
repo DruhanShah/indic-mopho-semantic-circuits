@@ -1,0 +1,12 @@
+#!/bin/bash
+#SLURM --nodes=1
+#SLURM --account=nlp
+#SLURM --gres=gpu:4
+#SLURM --cpus-per-gpu=10
+#SLURM --output=out.txt
+
+rsync -avz druhan@ada:/share1/druhan/anlp/ /scratch/druhan/anlp/
+source .venv/bin/activate
+python train.py
+deactivate
+rsync -avz /scratch/druhan/anlp/ druhan@ada:/share1/druhan/anlp/

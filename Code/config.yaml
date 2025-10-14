@@ -1,19 +1,15 @@
-defaults:
-  - paths: local
-  - _self_
-
 paths:
-  local:
-    assets_dir: assets
-  ada:
-    assets_dir: /scratch/druhan/assets
+  assets_dir: /scratch/druhan/anlp
+
+seed: 42
 
 
 language: en # en, hi, te
 
 data:
   name: wikipedia
-  date: "20220301"
+  date: "20231101"
+  split: "train[:1%]"
 
 tokenizer:
   vocab_size: 50257
@@ -21,10 +17,10 @@ tokenizer:
 
 # GPT-2 Small
 model:
-  n_positions: 256
+  n_ctx: 256
   n_embd: 768
-  n_layer: 12
-  n_head: 12
+  n_l: 12
+  n_h: 12
 
 processing:
   num_workers: 4
@@ -52,7 +48,4 @@ training:
   
   prediction_loss_only: true
   report_to: "none" # "tensorboard", "wandb", etc.
-
-hydra:
-  run:
-    dir: ${paths.assets_dir}/outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  overwrite_output_dir: true
